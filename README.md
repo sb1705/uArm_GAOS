@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-# uArm_GAOS
-# OS_Exam
-# OS_Exam
-# OS_Exam
-# OS_Exam
 =======
 	 ____    ______  _____   ____       
 	/\  _`\ /\  _  \/\  __`\/\  _`\     
@@ -188,9 +182,41 @@ da più funzioni in questo modulo:
 
 
 
-struct pcb_t *removeChild(struct pcb_t *p)------------------------------------------	La variabile 		struct clist *c;	è "superflua" perchè serve solo nell'assegnamento alla variabile d:		d=container_of(c, struct pcb_t, p_siblings);	però è stato scelto di inserirla al fine di migliorare la leggibilità del codice.	Se si volesse eliminare per effettuare un assegnamento in meno basterebbe modificare l'assegnamento a d	in questo modo:		d=container_of(p->p_children.next->next, struct pcb_t, p_siblings);struct pcb_t *outChild(struct pcb_t *p)---------------------------------------	Dato che abbiamo una funzione che ci rimuove il primo processo figlio, in caso p sia primogenito usiamo la removeChild. Altrimenti utilizziamo la clist_delete per scollegare p dai fratelli e modifichiamo opportunamente i suoi campi per scollegarlo anche dal padre.
+struct pcb_t *removeChild(struct pcb_t *p)
+------------------------------------------
 
-				    asl.c   			           =====Questo modulo ha lo scopo di rappresentare i semafori e le dinamiche che li coinvolgono.int insertBlocked(int *semAdd, struct pcb_t *p)-----------------------------------------------Abbiamo utilizzato l'ordinamento della lista dei semafori per ottimizzare la nostra funzione.In particolare se semAdd è maggiore del campo s_semAdd dell'elemento in coda, possiamo semplicementeinserire semAdd come ultimo elemento della lista dei semafori attivi e terminare. Altrimenti lo inseriamo al posto giusto.Nel caso la lista dei semafori attivi sia vuota non si entra mai nel ciclo e tale caso è gestito dall'ultima parte della funzione.struct pcb_t *headBlocked(int *semAdd)
+	La variabile 
+		struct clist *c;
+	è "superflua" perchè serve solo nell'assegnamento alla variabile d:
+		d=container_of(c, struct pcb_t, p_siblings);
+	però è stato scelto di inserirla al fine di migliorare la leggibilità del codice.
+	Se si volesse eliminare per effettuare un assegnamento in meno basterebbe modificare l'assegnamento a d
+	in questo modo:
+		d=container_of(p->p_children.next->next, struct pcb_t, p_siblings);
+
+
+struct pcb_t *outChild(struct pcb_t *p)
+---------------------------------------
+
+	
+Dato che abbiamo una funzione che ci rimuove il primo processo figlio, in caso p sia primogenito usiamo la removeChild. Altrimenti utilizziamo la clist_delete per scollegare p dai fratelli e modifichiamo opportunamente i suoi campi per scollegarlo anche dal padre.
+
+				    asl.c
+   			           =====
+
+Questo modulo ha lo scopo di rappresentare i semafori e le dinamiche che li coinvolgono.
+
+
+int insertBlocked(int *semAdd, struct pcb_t *p)
+-----------------------------------------------
+
+Abbiamo utilizzato l'ordinamento della lista dei semafori per ottimizzare la nostra funzione.
+In particolare se semAdd è maggiore del campo s_semAdd dell'elemento in coda, possiamo semplicemente
+inserire semAdd come ultimo elemento della lista dei semafori attivi e terminare. Altrimenti lo inseriamo al posto giusto.
+Nel caso la lista dei semafori attivi sia vuota non si entra mai nel ciclo e tale caso è gestito dall'ultima parte della funzione.
+
+
+struct pcb_t *headBlocked(int *semAdd)
 -----------------------------------------------
 
 La funzione gestisce il caso in cui il semaforo sia attivo ma non ha processi in coda, in teoria non dovrebbe essere necessario, in quanto un semaforo è nella lista
