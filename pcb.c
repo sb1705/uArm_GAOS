@@ -15,7 +15,7 @@ void freePcb(struct pcb_t *p){
 
 //Rimuove un processo dalla pcbFree e ne ritorna il puntatore.
 
-struct pcb_t *allocPcb(){						
+struct pcb_ta*allocPcb(){
 	if (clist_empty(pcbFree)){					//Nessun processo libero
 		return (NULL);
 

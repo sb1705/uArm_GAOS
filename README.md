@@ -223,14 +223,3 @@ La funzione gestisce il caso in cui il semaforo sia attivo ma non ha processi in
 dei processi attivi solo se ha almeno un processo.
 
 
-
-
-
-
-
-
-
-
-
->>>>>>> f90cd28e0a815d7b7f7109e57acbf8612a11d14b
-# OS_Exam
