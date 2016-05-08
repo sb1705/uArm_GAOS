@@ -50,7 +50,7 @@ void populate(memaddr area, memaddr handler){
 	STST(newArea);
 	
 	//Set the PC to the address of your nucleus function that is to handle exceptions of that type.
-	newArea->pc = ???????;
+	newArea->pc = handler;
 	
 	//Set the SP to RAMTOP. Each exception handler will use the last frame of RAM for its stack.
 	
@@ -78,10 +78,21 @@ int processCount; //è giusto farli int?
 int softBlockCount;
 
 
+//semafori per i device -> NB per il terminale sono due
+//i semafori a loro volta hanno 8 indici, uno per ogni linea di interrupt -> perchè? -> intanto io metto solo a semplicei int
+
+//for in- terrupt lines 3-7 the Interrupting Devices Bit Map, as defined in the μARM informal specifications document, will indicate which devices on each of these interrupt lines have a pending interrupt. -> quindi si devono avere 8 indici -> non ho voglia di modificare ora
+
+int disk;//[DEV_PER_INT];
+int tape;//[DEV_PER_INT];
+int network;//[DEV_PER_INT];
+int printer;//[DEV_PER_INT];
+int termTrasmitter;//[DEV_PER_INT];
+int termReceiver;//[DEV_PER_INT];
+
 //altre variabili
 
 int pseudoClock;
-
 
 int main()
 {
@@ -119,7 +130,12 @@ int main()
 	
 	//Initialize all nucleus maintained semaphores. In addition to the above nu- cleus variables, there is one semaphore variable for each external (sub)device in μARM, plus a semaphore to represent a pseudo-clock timer. Since ter- minal devices are actually two independent sub-devices (see Section 5.7- pops), the nucleus maintains two semaphores for each terminal device. All of these semaphores need to be initialized to zero.
 	
-	//si ma quali sono i device esterni??
+	disk = 0;
+	tapes = 0;
+	network = 0;
+	printer = 0;
+	termTrasmitter = 0;
+	termReceiver = 0;
 	
 	pseudoClock = 0;
 	
