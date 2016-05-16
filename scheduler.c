@@ -1,12 +1,13 @@
 #include "pcb.h"
 #include <libuarm.h>
+#include <uARMconst.h>
 
 
 //Definisco le variabili inizializzate in initial.c
 extern pcb_t *currentProcess;
 extern clist readyQueue;
-extern int processCount;
-extern int softBlockCount;
+extern unsigned int processCount;
+extern unsigned int softBlockCount;
 
 void scheduler()
 {
@@ -15,16 +16,19 @@ void scheduler()
 	//	-Esiste un processo in esecuzione -> context switch
 	//	-Non c'è un processo -> ne carico uno
 	
-	if(currentProcess!=NULL){
+	if(currentProcess!=NULL){ //current process è quello che deve essere eseguito
 		
-		//metto in coda il processo che deve ancora terminare
-		pcb_t *notTerminated = currentProcess;
-		insertProcQ(readyQueue, notTerminated);
+		timer+=getTODLO()-last_access;
+		last_access=getTODLO();
 		
-		//currentProcess =
-		//sono molto confuso su come tocca caricare i processi....
+		//#define MIN(a, b) (((a) < (b)) ? (a) : (b)) -> sta su uARMconst
+		//#define SCHED_TIME_SLICE 5000
+		//#define SCHED_PSEUDO_CLOCK 100000
+
+		setTIMER(MIN(SCHED_TIME_SLICE, SCHED_PSEUDO_CLOCK-timer));
 		
-		//penso che sarà tutto implementato nell'interrupt handler??
+		LDST(&(currentProcess->s_t));
+		
 		
 	}
 	else{
@@ -43,9 +47,9 @@ void scheduler()
 			
 			//qualsiasi altro stato
 			PANIC();
-
 			
 		}
+		
 		else{
 			//semplicemente carico il primo processo in memoria
 			//scherzavo, non è semplice
@@ -55,7 +59,8 @@ void scheduler()
 			if(currentProcess == NULL) PANIC(); //qualcosa è andato storto
 			
 			//imposta i timer e altre cose brutte
-			
+		
+			scheduler();
 		}
 	}
 

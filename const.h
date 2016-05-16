@@ -51,7 +51,7 @@
 /* device types count with separate terminal read and write devs */
 #define N_DEV_TYPES (N_EXT_IL+1)
 
-
+/* sono definiti in uARMconst.h
 
 #define INT_NEWAREA 0x7080
 #define INT_OLDAREA 0x7000
@@ -61,5 +61,7 @@
 #define PGMTRAP_OLDAREA 0x7200
 #define SYSBK_NEWAREA 0x7380
 #define SYSBK_OLDAREA 0x7300
+ 
+ */
 
 #endif
