@@ -184,7 +184,7 @@ void test() {
 	print("p1 v(testsem)\n");
 
 	/* set up states of the other processes */
-
+	
 	/* set up p2's state */
 	STST(&p2state);			/* create a state area using p1's state    */
 	

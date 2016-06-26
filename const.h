@@ -28,7 +28,7 @@
 #define TERMINATEPROCESS 2
 #define SEMOP 3
 #define SPECSYSHDL 4
-#define SPECTLBHDL 5
+#define SPECTLBHDL 5/Users/giuliozhou/Downloads/uarmdoc.pdf
 #define SPECPGMTHDL 6
 #define EXITTRAP 7
 #define GETCPUTIME 8

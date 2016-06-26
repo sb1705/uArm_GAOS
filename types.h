@@ -24,6 +24,16 @@ typedef struct pcb_t {
     struct clist p_list;			 	/* process list */
     struct clist p_children; 			/* children list entry point*/
     struct clist p_siblings; 			/* children list: links to the siblings */
-}pcb_t; 
+}pcb_t;
+
+typedef struct pid_s {
+	/* Pid del processo */
+	int pid;
+	/* Puntatore al pcb */
+	pcb_t *pcb;
+	
+	struct clist pid_table;
+	
+} pid_s;
 
 #endif //__GAOS__TYPES
