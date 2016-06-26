@@ -92,7 +92,7 @@ unsigned int softBlockCount;
 //semafori per i device -> NB per il terminale sono due
 //i semafori a loro volta hanno 8 indici, uno per ogni linea di interrupt -> perchè? -> intanto io metto solo a semplicei int
 
-//for interrupt lines 3-7 the Interrupting Devices Bit Map, as defined in the μARM informal specifications document, will indicate which devices on each of these interrupt lines have a pending interrupt. -> quindi si devono avere 8 indici -> non ho voglia di modificare ora
+//for interrupt lines 3-7 the Interrupting Devices Bit Map, as defined in the μARM informal specifications document, will indicate which devices on each of these interrupt lines have a pending interrupt. -> quindi si devono avere 8 indici -> non ho voglia di modificare ora ->modificato
 
 //#define DEV_PER_INT 8
 
