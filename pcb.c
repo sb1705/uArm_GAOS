@@ -144,11 +144,14 @@ struct pcb_t *outChild(struct pcb_t *p){
 			return(removeChild(p->p_parent));						//... usiamo la removeChild
 
 		else{														//Altrimenti...
-			clist_delete(p, (p->p_parent)->p_children.next, p_siblings); //rimuovo p dai figli di suo padre
-			p->p_parent=NULL;										//scolleghiamo dal padre
-			p->p_siblings.next=NULL; 								//scolleghiamo dal figlio
-			return(p);
- 
+			if(clist_delete(p, (p->p_parent)->p_children.next, p_siblings)){
+				return(NULL); //Penso si debba restituire NULL... sennò che altro?
+			}
+			else {//rimuovo p dai figli di suo padre
+				p->p_parent=NULL;										//scolleghiamo dal padre
+				p->p_siblings.next=NULL; 								//scolleghiamo dal figlio
+				return(p);
+			}
 		}  
 	}
 }
