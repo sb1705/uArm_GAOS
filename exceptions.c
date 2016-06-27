@@ -3,7 +3,7 @@
 
 #include <libuarm.h>
 
-HIDDEN state_t *sysBp_old = (state_t *) SYSBK_OLDAREA;
+HIDDEN state_t *sysBp_old = (state_t *) SYSBK_OLDAREA; //Cos'è???
 
 
 // ---- implementa qui le syscall
@@ -166,11 +166,11 @@ void semaphoreOperation (int *semaddr, int weight){
 	else{
 		(*semaddr) += weight; //vediamo se funziona
 		
-		if(*semaddr <=0){
+		if(*semaddr <=0){ // se il semaforo è minore di zero, non dovrei bloccare il processo al semaforo invece di sloccarlo?
 			
 			pcb_t *p;
 			
-			p = removeBlocked((S32 *) semaddr);
+			p = removeBlocked((S32 *) semaddr); // percé c'è il cast?
 			/* Se è stato sbloccato un processo da un semaforo esterno */
 			if (p != NULL)
 			{
