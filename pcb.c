@@ -144,6 +144,11 @@ struct pcb_t *outChild(struct pcb_t *p){
 			return(removeChild(p->p_parent));						//... usiamo la removeChild
 
 		else{														//Altrimenti...
+			
+			//COMMENTO DI GIULIO -> Secondo me andava bene come avevamo fatto noi, infatti nelle specifiche c'è scritto di tornare NULL se non aveva il genitore, p altrimenti
+			//Quindi sostanzialmente non ci interessa se il genitore non ha come figlio p, basta separare p dal "padre"
+			//La mia considerazione è: può essere che la delete ci cambia il puntatore p e quindi quando restituiamo p non è p ma un altro puntatore??
+			
 			if(clist_delete(p, (p->p_parent)->p_children.next, p_siblings)){
 				return(NULL); //Penso si debba restituire NULL... sennò che altro?
 			}
