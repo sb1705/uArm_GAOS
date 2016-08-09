@@ -163,35 +163,37 @@ void semaphoreOperation (int *semaddr, int weight){
 	if (weight==0){
 		SYSCALL(TERMINATEPROCESS, SYSCALL(GETPID)); //vediamo se possiamo farlo
 	}
-	else{
+	else{ 
 		(*semaddr) += weight; //vediamo se funziona
-		
-		if(*semaddr <=0){ // se il semaforo è minore di zero, non dovrei bloccare il processo al semaforo invece di sloccarlo?
-			
-			pcb_t *p;
-			
-			p = removeBlocked((S32 *) semaddr); // percé c'è il cast?
-			/* Se è stato sbloccato un processo da un semaforo esterno */
-			if (p != NULL)
-			{
-				/* Viene inserito nella readyQueue e viene aggiornata la flag isOnDev a FALSE */
-				insertProcQ(&readyQueue, p);
-				// p->p_cursem = NULL; non serve perchè lo fa dentro l'insert
-			}
-			
+		if(weight > 0){ //abbiamo liberato risorse
+			if(*semaddr >= 0){
+				// Controllo se il primo nella lista dei bloccati ha le risorse richieste
+
+				// Non so come fare... Bisogna inserire un campo nella struttura dei pcb? O.O
+
+				// Se sem > risorse richieste --> sblocco processo
+				pcb_t *p;
+				
+				p = removeBlocked((S32 *) semaddr); // percé c'è il cast?
+				/* Se è stato sbloccato un processo da un semaforo esterno */
+				if (p != NULL)
+				{
+					/* Viene inserito nella readyQueue e viene aggiornata la flag isOnDev a FALSE */
+					insertProcQ(&readyQueue, p);
+					// p->p_cursem = NULL; non serve perchè lo fa dentro l'insert
+				}
+			}	
 		}
-		else{
-			
-			/* Inserisce il processo corrente in coda al semaforo specificato */
-			if(insertBlocked((S32 *) semaddr, currentProcess)) PANIC();	//currentProcess è dell'initial???
-			currentProcess = NULL;
-			
+		else{ //abbiamo allocato risorse
+			//When  resources  are  allocated,  if  the  value  of  the  semaphore  was  or
+			//becomes negative, the requesting process should be blocked in the semaphore's queue.
+			if(*semaddr <= 0){
+				if(insertBlocked((S32 *) semaddr, currentProcess)) PANIC();	//currentProcess è dell'initial???
+				currentProcess = NULL; 
+			}
 		}
 	}
-	
 }
-
-
 
 
 //Che palle... questi due fanno più o meno le stesse cose, cambia quale system call ha chiamato l'errore, per il primo SYS5 e il secondo SYS6
