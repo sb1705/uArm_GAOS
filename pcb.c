@@ -25,6 +25,7 @@ struct pcb_t *allocPcb(){
 	clist_dequeue(&pcbFree);
     p->p_parent=NULL;
 	p->p_cursem=NULL;
+	p->p_resource=0;
 	p->p_s=0;
 	p->p_list.next=NULL;
 	p->p_children.next=NULL;
