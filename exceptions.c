@@ -157,40 +157,83 @@ void sysBpHandler(){
 }
 
 
+
+/* SYS1 : Crea un nuovo processo.
+  * @param statep : stato del processore da cui creare il nuovo processo.
+  * @return Restituisce -1 in caso di fallimento, mentre il PID (valore maggiore o uguale a 0) in caso di avvenuta creazione.
+ */
+int createProcess(state_t *statep){
+	int i;
+	pcb_t *p;
+
+	/* In caso non ci fossero pcb liberi, restituisce -1 */
+	if((p = allocPcb()) == NULL)
+		return -1;
+	else {
+		/* Carica lo stato del processore in quello del processo */
+		STST(&(p->p_state)); //Speriamo vada bene...
+
+		/* Aggiorna il contatore dei processi e il pidCount (progressivo) */
+		processCount++;
+		pidCount++;
+		p->p_pid = pidCount;
+
+		/* Ricerca una cella vuota della tabella pcbused_table in cui inserire il processo appena creato */
+		for(i=0; i<MAXPROC; i++)
+			if(pcbused_table[i].pid == 0) break;
+
+		/* Aggiorna la tabella dei pcb utilizzati, assegnando il giusto pid e il puntatore al pcb del processo creato */
+		pcbused_table[i].pid = p->p_pid;
+		pcbused_table[i].pcb = p;
+
+		/* p diventa un nuovo figlio del processo chiamante */
+		insertChild(currentProcess, p);
+
+		insertProcQ(&readyQueue, p);
+
+		return pidCount;
+	}
+}
+
 //Semaphore Operation SYS3
 void semaphoreOperation (int *semaddr, int weight){
-	
+
 	if (weight==0){
 		SYSCALL(TERMINATEPROCESS, SYSCALL(GETPID)); //vediamo se possiamo farlo
 	}
-	else{ 
-		(*semaddr) += weight; //vediamo se funziona
+	else{
+
+		(*semaddr) += weight;
 		if(weight > 0){ //abbiamo liberato risorse
 			if(*semaddr >= 0){
-				// Controllo se il primo nella lista dei bloccati ha le risorse richieste
 
-				// Non so come fare... Bisogna inserire un campo nella struttura dei pcb? O.O
-
-				// Se sem > risorse richieste --> sblocco processo
+				// Se sem > risorse richieste dal primo bloccato --> sblocco processo
 				pcb_t *p;
-				
-				p = removeBlocked((S32 *) semaddr); // percé c'è il cast?
-				/* Se è stato sbloccato un processo da un semaforo esterno */
-				if (p != NULL)
-				{
-					/* Viene inserito nella readyQueue e viene aggiornata la flag isOnDev a FALSE */
-					insertProcQ(&readyQueue, p);
-					// p->p_cursem = NULL; non serve perchè lo fa dentro l'insert
+				p=headBlocked(semaddr);
+				if(p!=NULL){
+					if(p->p_resource<=weight){
+						p = removeBlocked(semaddr);
+						if (p != NULL){
+							p->p_resource=0;
+							insertProcQ(&readyQueue, p);
+						}
+					}
 				}
-			}	
+			}
 		}
-		else{ //abbiamo allocato risorse
+		else{ // weight <0, abbiamo allocato risorse
 			//When  resources  are  allocated,  if  the  value  of  the  semaphore  was  or
 			//becomes negative, the requesting process should be blocked in the semaphore's queue.
-			if(*semaddr <= 0){
-				if(insertBlocked((S32 *) semaddr, currentProcess)) PANIC();	//currentProcess è dell'initial???
-				currentProcess = NULL; 
+
+			//se il semaforo era o diventa negativo ci blocchiamo, altrimenti modifichiamo il valore del semaforo
+
+			if  (*semaddr <= 0)  {
+				currentProcess->p_resource=weight;
+				if(insertBlocked(semaddr, currentProcess))
+					PANIC();	//currentProcess è dell'initial???
+				currentProcess = NULL;
 			}
+
 		}
 	}
 }
